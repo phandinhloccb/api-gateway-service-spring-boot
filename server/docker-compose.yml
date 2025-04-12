@@ -27,9 +27,16 @@ services:
       DB_PASSWORD: password
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      JAVA_OPTS: -Xms256m -Xmx1024m
     ports:
       - "8181:8080"
     volumes:
       - ./data/docker_keycloak/realms/:/opt/keycloak/data/import/
     depends_on:
       - keycloak-mysql
+    deploy:
+      resources:
+        limits:
+          memory: 1.5G
+        reservations:
+          memory: 512M
