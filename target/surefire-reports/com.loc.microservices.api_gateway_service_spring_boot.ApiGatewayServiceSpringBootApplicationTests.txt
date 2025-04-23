@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.loc.microservices.api_gateway_service_spring_boot.ApiGatewayServiceSpringBootApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.560 s -- in com.loc.microservices.api_gateway_service_spring_boot.ApiGatewayServiceSpringBootApplicationTests
