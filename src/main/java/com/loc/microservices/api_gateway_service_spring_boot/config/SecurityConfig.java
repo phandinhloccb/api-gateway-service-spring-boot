@@ -15,8 +15,9 @@ import java.util.Arrays;
 @Configuration
 public class SecurityConfig {
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
-    private String issuerUri;
+    // Không cần issuerUri nữa khi không dùng JWT
+    // @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+    // private String issuerUri;
 
     private final String[] freeResourceUrls = {
             "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**",
@@ -30,9 +31,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(freeResourceUrls).permitAll()
-                        .anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
+                        // Cho phép tất cả các request mà không cần xác thực
+                        .anyRequest().permitAll())
+                // Loại bỏ oauth2ResourceServer để tắt xác thực JWT
+                // .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .build();
     }
 
@@ -48,5 +50,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-  
 }
