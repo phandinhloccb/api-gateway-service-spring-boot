@@ -1,0 +1,108 @@
+spring:
+  application:
+    name: api-gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/spring-microservices-security-realm
+          jwk-set-uri: http://localhost:8181/realms/spring-microservices-security-realm/protocol/openid-connect/certs
+
+server:
+  port: 9000
+
+# Service URLs
+services:
+  product:
+    url: http://localhost:8080
+  order:
+    url: http://localhost:8081
+  inventory:
+    url: http://localhost:8082
+
+# SpringDoc OpenAPI Configuration
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    urls:
+      - name: Product Service
+        url: /aggregate/product-service/v3/api-docs
+        display-name: "Product Service API"
+      - name: Order Service
+        url: /aggregate/order-service/v3/api-docs
+        display-name: "Order Service API"
+      - name: Inventory Service
+        url: /aggregate/inventory-service/v3/api-docs
+        display-name: "Inventory Service API"
+    oauth:
+      use-basic-authentication-with-access-code-grant: true
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  show-actuator: false
+
+# Resilience4j Circuit Breaker Configuration
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        minimum-number-of-calls: 5
+    instances:
+      productServiceCircuitBreaker:
+        base-config: default
+        register-health-indicator: true
+      orderServiceCircuitBreaker:
+        base-config: default
+        register-health-indicator: true
+      inventoryServiceCircuitBreaker:
+        base-config: default
+        register-health-indicator: true
+      # Swagger Circuit Breakers
+      productServiceSwaggerCircuitBreaker:
+        base-config: default
+        register-health-indicator: true
+      orderServiceSwaggerCircuitBreaker:
+        base-config: default
+        register-health-indicator: true
+      inventoryServiceSwaggerCircuitBreaker:
+        base-config: default
+        register-health-indicator: true
+
+  timelimiter:
+    instances:
+      default:
+        timeout: 10s
+
+  retry:
+    instances:
+      default:
+        max-attempts: 3
+        wait-duration: 2s
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+
+# Logging for debugging
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.cloud.gateway: DEBUG
