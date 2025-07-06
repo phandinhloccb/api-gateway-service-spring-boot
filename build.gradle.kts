@@ -28,6 +28,7 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webmvc")
+	implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

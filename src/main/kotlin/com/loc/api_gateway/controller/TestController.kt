@@ -9,11 +9,14 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import com.fasterxml.jackson.databind.ObjectMapper
+import mu.KotlinLogging
 import java.util.Base64
 
 @RestController
 @RequestMapping("/api/gateway")
 class TestController {
+
+    private val log = KotlinLogging.logger {}
 
     @Value("\${spring.security.oauth2.resourceserver.jwt.secret}")
     private lateinit var jwtSecret: String
@@ -75,37 +78,37 @@ class TestController {
 
     @GetMapping("/debug-jwt")
     fun debugJwt(@RequestHeader("Authorization") authHeader: String): Map<String, Any> {
-        println("🔍 DEBUG: debugJwt function called!")
-        println("🔍 DEBUG: authHeader = $authHeader")
+        log.info("🔍 DEBUG: debugJwt function called!")
+        log.info("🔍 DEBUG: authHeader = $authHeader")
         
         return try {
             val token = authHeader.replace("Bearer ", "")
-            println("🔍 DEBUG: token after removing Bearer = $token")
+            log.info("🔍 DEBUG: token after removing Bearer = $token")
             
             val parts = token.split(".")
-            println("🔍 DEBUG: token parts count = ${parts.size}")
+            log.info("🔍 DEBUG: token parts count = ${parts.size}")
             
             if (parts.size != 3) {
-                println("🔍 DEBUG: Invalid JWT format - returning error")
+                log.info("🔍 DEBUG: Invalid JWT format - returning error")
                 return mapOf("error" to "Invalid JWT format", "parts_count" to parts.size)
             }
             
-            println("🔍 DEBUG: JWT format is valid, processing...")
+            log.info("🔍 DEBUG: JWT format is valid, processing...")
             
             val header = String(Base64.getUrlDecoder().decode(parts[0]))
             val payload = String(Base64.getUrlDecoder().decode(parts[1]))
             val signature = parts[2]
             
-            println("🔍 DEBUG: header = $header")
-            println("🔍 DEBUG: payload = $payload")
-            println("🔍 DEBUG: signature = $signature")
+            log.info("🔍 DEBUG: header = $header")
+            log.info("🔍 DEBUG: payload = $payload")
+            log.info("🔍 DEBUG: signature = $signature")
             
             // Manual signature verification
             val headerAndPayload = "${parts[0]}.${parts[1]}"
             val expectedSignature = generateHmacSha384Signature(headerAndPayload, jwtSecret)
             
-            println("🔍 DEBUG: expected signature = $expectedSignature")
-            println("🔍 DEBUG: signatures match = ${signature == expectedSignature}")
+            log.info("🔍 DEBUG: expected signature = $expectedSignature")
+            log.info("🔍 DEBUG: signatures match = ${signature == expectedSignature}")
             
             mapOf(
                 "status" to "✅ Debug function executed successfully",
@@ -120,7 +123,7 @@ class TestController {
                 "token_parts_count" to parts.size
             )
         } catch (e: Exception) {
-            println("🔍 DEBUG: Exception occurred = ${e.message}")
+            log.info("🔍 DEBUG: Exception occurred = ${e.message}")
             e.printStackTrace()
             mapOf("error" to "Failed to debug JWT: ${e.message}")
         }
