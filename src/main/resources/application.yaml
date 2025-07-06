@@ -5,8 +5,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8181/realms/spring-microservices-security-realm
-          jwk-set-uri: http://localhost:8181/realms/spring-microservices-security-realm/protocol/openid-connect/certs
+          secret: MA9TFJ2cV/PxU1h68mbsq/vZB0LskxuAtsQFyZdrmBCNuGk+1pVS6YFIrQEEmnVV
 
 server:
   port: 9000
@@ -19,6 +18,8 @@ services:
     url: http://localhost:8081
   inventory:
     url: http://localhost:8082
+  auth:
+    url: http://localhost:8084
 
 # SpringDoc OpenAPI Configuration
 springdoc:
@@ -35,6 +36,8 @@ springdoc:
       - name: Inventory Service
         url: /aggregate/inventory-service/v3/api-docs
         display-name: "Inventory Service API"
+      - name: Auth Service
+        url: /aggregate/auth-service/v3/api-docs
     oauth:
       use-basic-authentication-with-access-code-grant: true
   api-docs:
